@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local `wrangler dev`. NEVER commit real secrets.
+ADMIN_TOKEN=local-dev-admin-token
+RATE_LIMIT_SECRET=change-me-to-a-long-random-string
+CORS_ORIGIN=*
+PUBLIC_BASE_URL=http://localhost:8787
+# Optional email notifications via Resend (https://resend.com):
+NOTIFY_EMAIL=
+RESEND_API_KEY=

@@ -1,0 +1,26 @@
+{
+  "name": "@t7m/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+  "dev": "wrangler dev",
+  "deploy": "wrangler deploy",
+  "build": "wrangler deploy --dry-run --outdir dist",
+  "typecheck": "tsc --noEmit",
+  "test": "vitest run",
+  "db:migrate:local": "wrangler d1 migrations apply t7m --local",
+  "db:migrate:remote": "wrangler d1 migrations apply t7m --remote",
+  "tail": "wrangler tail"
+  },
+  "dependencies": {
+  "@t7m/shared": "*",
+  "hono": "^4.6.14"
+  },
+  "devDependencies": {
+  "@cloudflare/workers-types": "^4.20250109.0",
+  "typescript": "^5.6.3",
+  "vitest": "^2.1.8",
+  "wrangler": "^4.0.0"
+  }
+}
