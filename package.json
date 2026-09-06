@@ -1,0 +1,25 @@
+{
+  "name": "t7m",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Brand & logo design client-intake questionnaire — Vercel frontend + Cloudflare Workers API",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @t7m/web",
+    "dev:api": "npm run dev -w @t7m/api",
+    "build": "npm run typecheck -w @t7m/shared && npm run build -w @t7m/api && npm run build -w @t7m/web",
+    "test": "npm run test -w @t7m/shared && npm run test -w @t7m/api",
+    "typecheck": "npm run typecheck -w @t7m/shared && npm run typecheck -w @t7m/api && npm run typecheck -w @t7m/web",
+    "lint": "npm run lint -w @t7m/web",
+    "db:migrate:local": "npm run db:migrate:local -w @t7m/api",
+    "db:migrate:remote": "npm run db:migrate:remote -w @t7m/api",
+    "deploy:api": "npm run deploy -w @t7m/api",
+    "deploy:web": "npm run deploy -w @t7m/web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

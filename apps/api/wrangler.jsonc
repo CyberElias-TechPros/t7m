@@ -1,0 +1,41 @@
+{
+  // Cloudflare Worker configuration — see README for provisioning steps.
+  "name": "t7m-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-15",
+  "observability": {
+    "enabled": true
+  },
+  // Defaults for local dev. Override per environment with `.dev.vars` (local)
+  // or `wrangler secret put` (production). Never commit real secrets.
+  "vars": {
+    "CORS_ORIGIN": "*",
+    "ADMIN_TOKEN": "dev-admin-token-change-me",
+    "RATE_LIMIT_SECRET": "dev-rate-limit-secret-change-me",
+    "PUBLIC_BASE_URL": "http://localhost:8787",
+    "NOTIFY_EMAIL": "",
+    "RESEND_API_KEY": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "t7m",
+      // Replace with the ID returned by `wrangler d1 create t7m` before deploying.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ATTACHMENTS",
+      "bucket_name": "t7m-attachments"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT",
+      // Replace with the ID returned by `wrangler kv namespace create RATE_LIMIT`.
+      "id": "00000000000000000000000000000000"
+    }
+  ]
+}
