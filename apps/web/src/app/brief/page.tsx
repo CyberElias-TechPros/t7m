@@ -9,10 +9,11 @@ import {
   formatZodErrors,
   type FieldErrors,
   type QuestionnaireAnswers,
-  type PairEntry,
   type AnswerValue,
 } from '@t7m/shared';
 import { FieldRenderer } from '@/components/fields';
+import { LogoMark } from '@/components/Logo';
+import { GlowOrbs } from '@/components/Reveal';
 import { createSubmission, uploadAttachment, ApiError } from '@/lib/api';
 import { loadDraft, saveDraft, clearDraft } from '@/lib/draft';
 import { ReviewStep } from '@/components/ReviewStep';
@@ -106,7 +107,6 @@ export default function BriefPage() {
     const allErrors = validateStep(SECTIONS.length);
     if (Object.keys(allErrors).length > 0) {
       setErrors(allErrors);
-      // Jump to the first section that has an error.
       for (let i = 0; i < SECTIONS.length; i++) {
         const ids = SECTIONS[i].fields.map((f) => f.id);
         if (ids.some((id) => allErrors[id])) {
@@ -129,7 +129,6 @@ export default function BriefPage() {
           try {
             await uploadAttachment(created.id, files[i]);
           } catch (err) {
-            // One bad file must not lose the whole brief.
             console.error('attachment failed', files[i].name, err);
           }
           setUploadProgress({ done: i + 1, total: files.length });
@@ -150,10 +149,7 @@ export default function BriefPage() {
     }
   }, [answers, files, honeypot, validateStep]);
 
-  const progressPct = useMemo(
-    () => Math.round((step / TOTAL_STEPS) * 100),
-    [step],
-  );
+  const progressPct = useMemo(() => Math.round((step / TOTAL_STEPS) * 100), [step]);
 
   // ---- Success screen -----------------------------------------------------------
   if (phase === 'success' && submissionId) {
@@ -161,38 +157,40 @@ export default function BriefPage() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-5 pb-24 pt-10">
-      <Link href="/" className="font-display text-xl font-bold tracking-tight">
-        T7M<span className="text-accent">.</span>Studio
+    <main className="relative mx-auto max-w-3xl px-5 pb-24 pt-28">
+      <GlowOrbs />
+      <Link href="/" className="inline-flex items-center gap-3">
+        <LogoMark className="h-9 w-9 text-violet-electric" glow />
+        <span className="font-display text-sm font-bold tracking-[0.18em] text-white">THE SEVENTH MAN</span>
       </Link>
 
       {draftResumed && step === 0 && (
-        <div className="mt-6 rounded-xl border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent-dark">
-          We picked up your saved draft from this device. Progress saves automatically as you type.
+        <div className="mt-6 rounded-xl border border-violet-electric/40 bg-violet/15 px-4 py-3 text-sm text-violet-soft backdrop-blur">
+          ✓ We picked up your saved draft from this device. Progress saves automatically as you type.
         </div>
       )}
 
       {/* Progress */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between text-sm font-medium text-ink-faint">
-          <span>
-            {isReview ? 'Review & submit' : `Section ${step + 1} of ${SECTIONS.length}`}
+      <div className="mt-10">
+        <div className="flex items-center justify-between text-sm font-semibold">
+          <span className="kicker">
+            {isReview ? 'Review & submit' : `${section.title}`}
           </span>
-          <span>{progressPct}%</span>
+          <span className="font-display text-violet-soft">{progressPct}%</span>
         </div>
         <div
-          className="mt-2 h-2 overflow-hidden rounded-full bg-line"
+          className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10"
           role="progressbar"
           aria-valuenow={progressPct}
           aria-valuemin={0}
           aria-valuemax={100}
         >
           <div
-            className="h-full rounded-full bg-accent transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-violet-bright to-violet-soft shadow-glow-sm transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
-        <nav className="mt-4 flex flex-wrap gap-1.5" aria-label="Sections">
+        <nav className="mt-5 flex flex-wrap gap-1.5" aria-label="Sections">
           {SECTIONS.map((s, i) => (
             <button
               key={s.id}
@@ -200,12 +198,12 @@ export default function BriefPage() {
               onClick={() => goToStep(i)}
               aria-current={i === step}
               className={
-                'rounded-full px-3 py-1 text-xs font-semibold transition ' +
+                'rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ' +
                 (i === step
-                  ? 'bg-ink text-white'
+                  ? 'bg-violet-bright text-white shadow-glow-sm'
                   : i < step
-                    ? 'bg-accent-soft text-accent-dark hover:bg-accent/20'
-                    : 'bg-white text-ink-faint hover:bg-paper')
+                    ? 'bg-violet/20 text-violet-soft hover:bg-violet/30'
+                    : 'bg-white/[0.04] text-ink-faint hover:bg-white/[0.08]')
               }
             >
               {i + 1}. {s.title}
@@ -216,8 +214,8 @@ export default function BriefPage() {
             onClick={() => goToStep(SECTIONS.length)}
             aria-current={isReview}
             className={
-              'rounded-full px-3 py-1 text-xs font-semibold transition ' +
-              (isReview ? 'bg-ink text-white' : 'bg-white text-ink-faint hover:bg-paper')
+              'rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ' +
+              (isReview ? 'bg-violet-bright text-white shadow-glow-sm' : 'bg-white/[0.04] text-ink-faint hover:bg-white/[0.08]')
             }
           >
             ✓ Review
@@ -226,15 +224,18 @@ export default function BriefPage() {
       </div>
 
       {/* Card */}
-      <div className="card mt-6 p-6 sm:p-9">
+      <div className="card mt-7 p-6 sm:p-10">
         {!isReview ? (
           <>
-            <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+            <p className="kicker">
+              Chapter {step + 1} of {SECTIONS.length}
+            </p>
+            <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
               {section.title}
             </h1>
-            {section.subtitle && <p className="mt-2 text-ink-soft">{section.subtitle}</p>}
+            {section.subtitle && <p className="mt-2.5 text-ink-soft">{section.subtitle}</p>}
 
-            <div className="mt-8 space-y-7">
+            <div className="mt-9 space-y-8">
               {section.fields.map((field) => (
                 <div key={field.id}>
                   <FieldRenderer
@@ -247,7 +248,7 @@ export default function BriefPage() {
               ))}
             </div>
 
-            {/* Honeypot fields — visually hidden, bots fill them */}
+            {/* Honeypot */}
             <div className="sr-only-ish" aria-hidden>
               <label>
                 Company (leave empty)
@@ -283,15 +284,15 @@ export default function BriefPage() {
         )}
 
         {fatalError && phase === 'error' && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" role="alert">
+          <div className="mt-6 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300" role="alert">
             {fatalError} Your answers are saved on this device — feel free to retry.
           </div>
         )}
 
         {phase === 'submitting' && (
-          <div className="mt-6 rounded-xl border border-line bg-paper px-4 py-4 text-sm">
+          <div className="mt-6 rounded-xl border border-violet-electric/40 bg-violet/15 px-4 py-4 text-sm text-violet-soft">
             <div className="flex items-center gap-3">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-violet-soft border-t-transparent" />
               <span>
                 {uploadProgress
                   ? `Uploading references… ${uploadProgress.done}/${uploadProgress.total}`
@@ -302,13 +303,8 @@ export default function BriefPage() {
         )}
 
         {/* Nav buttons */}
-        <div className="mt-9 flex items-center justify-between gap-4 border-t border-line pt-6">
-          <button
-            type="button"
-            onClick={goBack}
-            disabled={step === 0 || phase === 'submitting'}
-            className="btn-secondary"
-          >
+        <div className="mt-10 flex items-center justify-between gap-4 border-t border-line pt-7">
+          <button type="button" onClick={goBack} disabled={step === 0 || phase === 'submitting'} className="btn-secondary">
             ← Back
           </button>
           {!isReview ? (
@@ -316,20 +312,15 @@ export default function BriefPage() {
               Continue →
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={phase === 'submitting'}
-              className="btn-accent"
-            >
+            <button type="button" onClick={handleSubmit} disabled={phase === 'submitting'} className="btn-primary">
               {phase === 'submitting' ? 'Submitting…' : 'Submit brief ✓'}
             </button>
           )}
         </div>
       </div>
 
-      <p className="mt-6 text-center text-sm text-ink-faint">
-        Your answers are sent directly to the studio. We never share your brief.
+      <p className="mt-7 text-center text-sm text-ink-faint">
+        Your answers go directly to the studio. We never share your brief.
       </p>
     </main>
   );
@@ -345,26 +336,30 @@ function hasContent(a: QuestionnaireAnswers): boolean {
 
 function SuccessScreen({ id, filesCount, brandName }: { id: string; filesCount: number; brandName: string }) {
   return (
-    <main className="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center px-5 text-center">
-      <div className="card w-full p-8 sm:p-12">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-3xl">
-          ✓
+    <main className="relative flex min-h-screen flex-col items-center justify-center px-5">
+      <GlowOrbs />
+      <div className="card w-full max-w-2xl p-8 text-center sm:p-14">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-violet-bright shadow-glow animate-float">
+          <LogoMark className="h-10 w-10 text-white" glow />
         </div>
-        <h1 className="mt-6 font-display text-3xl font-bold tracking-tight">Brief received!</h1>
-        <p className="mt-3 text-lg text-ink-soft">
-          Thanks — we&apos;ve got everything we need for <strong>{brandName}</strong>.
+        <p className="kicker mt-8 justify-center">Brief received</p>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          YOU&apos;RE IN.
+        </h1>
+        <p className="mt-4 text-lg text-ink-soft">
+          We&apos;ve got everything we need for <strong className="text-white">{brandName}</strong>.
           {filesCount > 0 && ` ${filesCount} reference file${filesCount === 1 ? '' : 's'} uploaded.`}
         </p>
         <p className="mt-4 text-sm leading-relaxed text-ink-faint">
           We review every brief personally and will reply to your contact email within 2 business
           days with initial thoughts and a tailored proposal.
         </p>
-        <dl className="mx-auto mt-6 max-w-xs rounded-xl bg-paper px-5 py-4 text-left text-sm">
-          <dt className="text-ink-faint">Brief reference</dt>
-          <dd className="mt-0.5 font-mono text-[13px] font-semibold">{id.slice(0, 13)}…</dd>
+        <dl className="mx-auto mt-7 max-w-xs rounded-2xl border border-line bg-void-black/60 px-5 py-4 text-left">
+          <dt className="text-[11px] uppercase tracking-[0.2em] text-ink-faint">Brief reference</dt>
+          <dd className="mt-1 font-mono text-[13px] font-semibold text-violet-soft">{id.slice(0, 13)}…</dd>
         </dl>
-        <div className="mt-8 flex justify-center gap-3">
-          <Link href="/" className="btn-secondary">
+        <div className="mt-9 flex justify-center gap-3">
+          <Link href="/" className="btn-primary">
             Back to home
           </Link>
         </div>

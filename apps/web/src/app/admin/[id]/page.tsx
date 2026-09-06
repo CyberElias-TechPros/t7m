@@ -15,6 +15,8 @@ import { SECTIONS } from '@t7m/shared';
 import { STATUS_META, STATUS_ORDER } from '@/lib/status';
 import { AdminLogin } from '@/components/AdminLogin';
 import { AnswerValueRead } from '@/components/AnswerValueRead';
+import { LogoMark } from '@/components/Logo';
+import { GlowOrbs } from '@/components/Reveal';
 
 const TOKEN_KEY = 't7m:admin-token';
 
@@ -120,15 +122,24 @@ export default function AdminDetailPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-4xl px-5 py-20 text-center text-ink-faint">Loading brief…</main>
+      <main className="relative mx-auto max-w-4xl px-5 py-24">
+        <GlowOrbs />
+        <div className="space-y-4">
+          <div className="shimmer h-10 w-64 rounded-xl" />
+          <div className="shimmer h-40 rounded-3xl" />
+          <div className="shimmer h-64 rounded-3xl" />
+        </div>
+      </main>
     );
   }
 
   if (error || !data) {
     return (
-      <main className="mx-auto max-w-2xl px-5 py-20 text-center">
-        <p className="text-lg font-semibold text-red-600">{error ?? 'Not found'}</p>
-        <Link href="/admin" className="btn-secondary mt-6 inline-flex">
+      <main className="relative mx-auto max-w-2xl px-5 py-24 text-center">
+        <GlowOrbs />
+        <LogoMark className="mx-auto h-14 w-14 text-violet-bright/60" />
+        <p className="mt-6 text-lg font-bold text-red-300">{error ?? 'Not found'}</p>
+        <Link href="/admin" className="btn-secondary mt-7 inline-flex">
           ← Back to all briefs
         </Link>
       </main>
@@ -136,51 +147,46 @@ export default function AdminDetailPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-5 pb-24 pt-8">
-      <Link href="/admin" className="text-sm font-semibold text-accent hover:text-accent-dark">
+    <main className="relative mx-auto max-w-4xl px-5 pb-24 pt-24">
+      <GlowOrbs />
+      <Link href="/admin" className="text-sm font-bold text-violet-soft hover:text-white">
         ← All briefs
       </Link>
 
-      <header className="mt-4 flex flex-wrap items-start justify-between gap-4">
+      <header className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight">{data.brandName}</h1>
-          <p className="mt-1 text-ink-soft">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white">{data.brandName}</h1>
+          <p className="mt-2 text-ink-soft">
             {data.contactName} ·{' '}
-            <a href={`mailto:${data.contactEmail}`} className="text-accent hover:underline">
+            <a href={`mailto:${data.contactEmail}`} className="text-violet-soft hover:underline">
               {data.contactEmail}
             </a>
           </p>
-          <p className="mt-1 text-sm text-ink-faint">
-            Received {new Date(data.createdAt).toLocaleString()}
-          </p>
+          <p className="mt-1 text-sm text-ink-faint">Received {new Date(data.createdAt).toLocaleString()}</p>
         </div>
         <span
-          className="rounded-full px-3 py-1.5 text-sm font-semibold"
-          style={{
-            backgroundColor: STATUS_META[data.status].bg,
-            color: STATUS_META[data.status].fg,
-          }}
+          className="rounded-full px-3.5 py-1.5 text-sm font-bold"
+          style={{ backgroundColor: STATUS_META[data.status].bg, color: STATUS_META[data.status].fg }}
         >
           {STATUS_META[data.status].label}
         </span>
       </header>
 
       {/* Status workflow */}
-      <section className="card mt-6 p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-faint">Pipeline</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
+      <section className="card mt-7 p-6">
+        <h2 className="label-base">Pipeline</h2>
+        <div className="mt-4 flex flex-wrap gap-2">
           {STATUS_ORDER.map((s) => (
             <button
               key={s}
               onClick={() => changeStatus(s)}
               disabled={saving || s === data.status}
               className={
-                'rounded-full border px-4 py-1.5 text-sm font-medium capitalize transition disabled:cursor-default ' +
+                'rounded-full border px-4 py-1.5 text-sm font-bold capitalize transition disabled:cursor-default ' +
                 (s === data.status
-                  ? 'border-transparent text-white'
-                  : 'border-line bg-white text-ink-soft hover:border-accent/50 hover:bg-accent-soft')
+                  ? 'border-transparent bg-violet-bright text-white shadow-glow-sm'
+                  : 'border-line bg-white/[0.03] text-ink-soft hover:border-violet-electric/60 hover:bg-violet/15 hover:text-white')
               }
-              style={s === data.status ? { backgroundColor: '#16151a' } : undefined}
             >
               {STATUS_META[s].label}
             </button>
@@ -189,23 +195,25 @@ export default function AdminDetailPage({ params }: { params: Promise<{ id: stri
       </section>
 
       {error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <div className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300">
           {error}
         </div>
       )}
 
       {/* Answers */}
       {SECTIONS.map((section, i) => (
-        <section key={section.id} className="card mt-6 p-6">
-          <h2 className="font-display text-xl font-bold tracking-tight">
-            <span className="mr-2 text-ink-faint">{i + 1}.</span>
+        <section key={section.id} className="card mt-6 p-6 sm:p-7">
+          <h2 className="flex items-center gap-3 font-display text-base font-bold uppercase tracking-[0.12em] text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet font-display text-xs font-bold text-white">
+              {i + 1}
+            </span>
             {section.title}
           </h2>
-          <dl className="mt-4 space-y-4">
+          <dl className="mt-5 space-y-4">
             {section.fields.map((field) => (
               <div key={field.id} className="grid gap-1 sm:grid-cols-[13rem,1fr] sm:gap-5">
-                <dt className="text-sm font-semibold text-ink-faint">{field.label}</dt>
-                <dd className="text-[15px]">
+                <dt className="text-[13px] font-semibold uppercase tracking-wide text-ink-faint">{field.label}</dt>
+                <dd className="text-[15px] text-ink">
                   <AnswerValueRead field={field} value={data.answers[field.id] as AnswerValue} />
                 </dd>
               </div>
@@ -216,24 +224,24 @@ export default function AdminDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* Attachments */}
       {data.attachments.length > 0 && (
-        <section className="card mt-6 p-6">
-          <h2 className="font-display text-xl font-bold tracking-tight">Attachments</h2>
+        <section className="card mt-6 p-6 sm:p-7">
+          <h2 className="font-display text-base font-bold uppercase tracking-[0.12em] text-white">Attachments</h2>
           <ul className="mt-4 space-y-2">
             {data.attachments.map((att) => (
               <li
                 key={att.key}
-                className="flex items-center justify-between rounded-lg border border-line bg-white px-4 py-3"
+                className="flex items-center justify-between rounded-xl border border-line bg-void-black/60 px-4 py-3"
               >
                 <span className="flex items-center gap-3 text-sm">
                   <span aria-hidden>📄</span>
-                  <span className="font-medium">{att.filename}</span>
+                  <span className="font-medium text-ink">{att.filename}</span>
                   <span className="text-xs text-ink-faint">
                     {Math.max(1, Math.round(att.size / 1024))} KB · {att.contentType}
                   </span>
                 </span>
                 <button
                   onClick={() => download(att.filename)}
-                  className="rounded-lg bg-accent-soft px-3 py-1.5 text-sm font-semibold text-accent-dark hover:bg-accent/20"
+                  className="rounded-lg bg-violet-bright px-3.5 py-1.5 text-sm font-bold text-white transition hover:shadow-glow-sm"
                 >
                   Download
                 </button>
@@ -244,63 +252,63 @@ export default function AdminDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {/* Internal notes */}
-      <section className="card mt-6 p-6">
-        <h2 className="font-display text-xl font-bold tracking-tight">Internal notes</h2>
+      <section className="card mt-6 p-6 sm:p-7">
+        <h2 className="font-display text-base font-bold uppercase tracking-[0.12em] text-white">Internal notes</h2>
         <p className="mt-1 text-sm text-ink-faint">Not visible to the client.</p>
         <textarea
-          className="input-base mt-3"
+          className="input-base mt-4"
           rows={4}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Call notes, proposal links, pricing…"
         />
         <div className="mt-3 flex justify-end">
-          <button onClick={saveNotes} disabled={saving} className="btn-secondary py-2 text-sm">
+          <button onClick={saveNotes} disabled={saving} className="btn-secondary !py-2 text-sm">
             Save notes
           </button>
         </div>
       </section>
 
       {/* Activity */}
-      <section className="card mt-6 p-6">
-        <h2 className="font-display text-xl font-bold tracking-tight">Activity</h2>
-        <ul className="mt-4 space-y-2 text-sm">
+      <section className="card mt-6 p-6 sm:p-7">
+        <h2 className="font-display text-base font-bold uppercase tracking-[0.12em] text-white">Activity</h2>
+        <ul className="mt-4 space-y-2.5 text-sm">
           {events.map((ev) => (
             <li key={ev.id} className="flex flex-wrap items-baseline gap-2">
               <span className="text-ink-faint">{new Date(ev.created_at).toLocaleString()}</span>
-              <span className="font-semibold">{ev.type}</span>
+              <span className="font-bold text-violet-soft">{ev.type}</span>
               {ev.detail && <span className="text-ink-soft">— {ev.detail}</span>}
-              <span className="text-xs text-ink-faint">({ev.actor})</span>
+              <span className="text-xs text-ink-faint/70">({ev.actor})</span>
             </li>
           ))}
         </ul>
       </section>
 
       {/* Danger zone */}
-      <section className="mt-8 rounded-2xl border border-red-200 bg-red-50/50 p-6">
-        <h2 className="font-semibold text-red-800">Delete brief</h2>
-        <p className="mt-1 text-sm text-red-700/80">
+      <section className="mt-8 rounded-3xl border border-red-500/30 bg-red-500/[0.07] p-6">
+        <h2 className="font-bold text-red-300">Delete brief</h2>
+        <p className="mt-1 text-sm text-red-200/70">
           Permanently removes the brief, its events, and stored attachments. This cannot be undone.
         </p>
         {!confirmDelete ? (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="mt-3 rounded-xl border border-red-300 bg-white px-5 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+            className="mt-4 rounded-xl border border-red-500/40 bg-transparent px-5 py-2 text-sm font-bold text-red-300 transition hover:bg-red-500/15"
           >
             Delete…
           </button>
         ) : (
-          <div className="mt-3 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-3">
             <button
               onClick={remove}
               disabled={saving}
-              className="rounded-xl bg-red-700 px-5 py-2 text-sm font-semibold text-white hover:bg-red-800 disabled:opacity-50"
+              className="rounded-xl bg-red-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-red-700 disabled:opacity-50"
             >
               {saving ? 'Deleting…' : 'Yes, delete permanently'}
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-ink-soft hover:bg-white"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-ink-soft transition hover:bg-white/[0.06]"
             >
               Cancel
             </button>

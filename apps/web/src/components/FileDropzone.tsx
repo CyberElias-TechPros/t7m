@@ -69,15 +69,19 @@ export function FileDropzone({
           if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
         }}
         className={
-          'flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition ' +
-          (dragging ? 'border-accent bg-accent-soft' : 'border-line bg-paper hover:border-accent/50')
+          'flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-9 text-center transition-all duration-200 ' +
+          (dragging
+            ? 'border-violet-electric bg-violet/20 shadow-glow-sm'
+            : 'border-line-strong bg-void-black/40 hover:border-violet-electric/70 hover:bg-violet/10')
         }
       >
-        <span className="text-2xl" aria-hidden>📎</span>
-        <span className="mt-2 text-sm font-semibold">
-          Drop files here or <span className="text-accent underline">browse</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-violet text-2xl shadow-glow-sm" aria-hidden>
+          📎
         </span>
-        <span className="mt-1 text-xs text-ink-faint">
+        <span className="mt-3 text-sm font-bold text-white">
+          Drop files here or <span className="text-violet-soft underline">browse</span>
+        </span>
+        <span className="mt-1.5 text-xs text-ink-faint">
           Images, PDF, or ZIP · up to {MAX_FILE_BYTES / 1024 / 1024} MB each ·{' '}
           {MAX_UPLOAD_BYTES / 1024 / 1024} MB total · {MAX_FILES} files max
         </span>
@@ -95,7 +99,7 @@ export function FileDropzone({
       </div>
 
       {rejected.length > 0 && (
-        <ul className="mt-2 space-y-1 text-[13px] font-medium text-red-600" role="alert">
+        <ul className="mt-2.5 space-y-1 text-[13px] font-medium text-red-400" role="alert">
           {rejected.map((r, i) => (
             <li key={i}>{r}</li>
           ))}
@@ -107,18 +111,18 @@ export function FileDropzone({
           {files.map((f, i) => (
             <li
               key={`${f.name}-${i}`}
-              className="flex items-center justify-between rounded-lg border border-line bg-white px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-xl border border-line bg-void-black/60 px-4 py-2.5 text-sm"
             >
-              <span className="flex min-w-0 items-center gap-2">
+              <span className="flex min-w-0 items-center gap-2.5">
                 <span aria-hidden>📄</span>
-                <span className="truncate font-medium">{f.name}</span>
+                <span className="truncate font-medium text-ink">{f.name}</span>
                 <span className="shrink-0 text-xs text-ink-faint">{formatSize(f.size)}</span>
               </span>
               <button
                 type="button"
                 aria-label={`Remove ${f.name}`}
                 onClick={() => onChange(files.filter((_, idx) => idx !== i))}
-                className="ml-2 rounded px-2 py-1 text-ink-faint hover:bg-paper hover:text-red-600"
+                className="ml-2 rounded-lg px-2 py-1 text-ink-faint transition hover:bg-white/[0.06] hover:text-red-400"
               >
                 ✕
               </button>

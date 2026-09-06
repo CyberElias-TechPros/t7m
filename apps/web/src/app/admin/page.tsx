@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   listSubmissions,
   exportCsvUrl,
@@ -8,8 +9,9 @@ import {
   type SubmissionSummary,
 } from '@/lib/api';
 import { AdminLogin } from '@/components/AdminLogin';
+import { LogoMark } from '@/components/Logo';
+import { GlowOrbs } from '@/components/Reveal';
 import { STATUS_META } from '@/lib/status';
-import Link from 'next/link';
 
 const TOKEN_KEY = 't7m:admin-token';
 const STATUS_FILTERS = ['all', 'new', 'reviewed', 'contacted', 'won', 'lost', 'archived'] as const;
@@ -86,28 +88,30 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-5 pb-20 pt-8">
+    <main className="relative mx-auto max-w-6xl px-5 pb-20 pt-24">
+      <GlowOrbs />
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <Link href="/" className="font-display text-xl font-bold tracking-tight">
-            T7M<span className="text-accent">.</span>Studio
+          <Link href="/" className="flex items-center gap-3">
+            <LogoMark className="h-8 w-8 text-violet-electric" glow />
+            <span className="font-display text-sm font-bold tracking-[0.18em] text-white">THE SEVENTH MAN</span>
           </Link>
-          <h1 className="mt-3 font-display text-2xl font-bold tracking-tight">Brand briefs</h1>
+          <h1 className="mt-5 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">BRIEF INBOX</h1>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handleExport} className="btn-secondary py-2 text-sm">
+          <button onClick={handleExport} className="btn-secondary !py-2.5 text-sm">
             ↓ Export CSV
           </button>
-          <button onClick={logout} className="btn-secondary py-2 text-sm">
+          <button onClick={logout} className="btn-ghost text-sm">
             Sign out
           </button>
         </div>
       </header>
 
       {/* Filters */}
-      <div className="mt-6 flex flex-wrap items-center gap-3">
+      <div className="mt-7 flex flex-wrap items-center gap-3">
         <form
-          className="flex flex-1 items-center gap-2"
+          className="flex min-w-[15rem] flex-1 items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             setPage(1);
@@ -116,13 +120,13 @@ export default function AdminPage() {
         >
           <input
             type="search"
-            className="input-base py-2"
+            className="input-base !py-2.5"
             placeholder="Search brand, name, or email…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search submissions"
           />
-          <button type="submit" className="btn-secondary py-2 text-sm">
+          <button type="submit" className="btn-secondary !py-2.5 text-sm">
             Search
           </button>
         </form>
@@ -135,8 +139,10 @@ export default function AdminPage() {
                 setPage(1);
               }}
               className={
-                'rounded-full px-3 py-1.5 text-xs font-semibold capitalize transition ' +
-                (statusFilter === s ? 'bg-ink text-white' : 'bg-white text-ink-soft hover:bg-paper')
+                'rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition ' +
+                (statusFilter === s
+                  ? 'bg-violet-bright text-white shadow-glow-sm'
+                  : 'bg-white/[0.04] text-ink-soft hover:bg-white/[0.08]')
               }
             >
               {s}
@@ -146,18 +152,23 @@ export default function AdminPage() {
       </div>
 
       {error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        <div className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300">
           {error}
         </div>
       )}
 
       {/* Table */}
-      <div className="card mt-5 overflow-hidden">
+      <div className="card mt-6 overflow-hidden">
         {loading ? (
-          <div className="px-6 py-16 text-center text-ink-faint">Loading…</div>
+          <div className="space-y-3 px-6 py-16">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="shimmer h-10 rounded-lg" />
+            ))}
+          </div>
         ) : items.length === 0 ? (
-          <div className="px-6 py-16 text-center">
-            <p className="text-lg font-semibold">No briefs found</p>
+          <div className="px-6 py-20 text-center">
+            <LogoMark className="mx-auto h-12 w-12 text-violet-bright/50" />
+            <p className="mt-4 font-display text-lg font-bold text-white">No briefs found</p>
             <p className="mt-1 text-sm text-ink-faint">
               {query || statusFilter !== 'all'
                 ? 'Try adjusting your filters.'
@@ -167,21 +178,21 @@ export default function AdminPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-line bg-paper text-xs uppercase tracking-wide text-ink-faint">
+              <thead className="border-b border-line bg-white/[0.03] text-[11px] uppercase tracking-[0.15em] text-ink-faint">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Brand</th>
-                  <th className="px-5 py-3 font-semibold">Contact</th>
-                  <th className="px-5 py-3 font-semibold">Status</th>
-                  <th className="px-5 py-3 font-semibold">Files</th>
-                  <th className="px-5 py-3 font-semibold">Received</th>
-                  <th className="px-5 py-3" />
+                  <th className="px-5 py-3.5 font-bold">Brand</th>
+                  <th className="px-5 py-3.5 font-bold">Contact</th>
+                  <th className="px-5 py-3.5 font-bold">Status</th>
+                  <th className="px-5 py-3.5 font-bold">Files</th>
+                  <th className="px-5 py-3.5 font-bold">Received</th>
+                  <th className="px-5 py-3.5" />
                 </tr>
               </thead>
               <tbody>
                 {items.map((item) => (
-                  <tr key={item.id} className="border-b border-line last:border-0 hover:bg-paper/60">
-                    <td className="px-5 py-4 font-semibold">
-                      <Link href={`/admin/${item.id}`} className="hover:text-accent">
+                  <tr key={item.id} className="border-b border-line last:border-0 transition hover:bg-violet/[0.07]">
+                    <td className="px-5 py-4 font-bold text-white">
+                      <Link href={`/admin/${item.id}`} className="hover:text-violet-soft">
                         {item.brandName}
                       </Link>
                     </td>
@@ -197,7 +208,7 @@ export default function AdminPage() {
                     <td className="px-5 py-4 text-right">
                       <Link
                         href={`/admin/${item.id}`}
-                        className="rounded-lg px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent-soft"
+                        className="rounded-lg px-3 py-1.5 text-sm font-bold text-violet-soft transition hover:bg-violet/15 hover:text-white"
                       >
                         Open →
                       </Link>
@@ -212,23 +223,15 @@ export default function AdminPage() {
 
       {/* Pagination */}
       {total > 0 && (
-        <div className="mt-5 flex items-center justify-between text-sm text-ink-faint">
+        <div className="mt-6 flex items-center justify-between text-sm text-ink-faint">
           <span>
             {total} brief{total === 1 ? '' : 's'} · page {page} of {totalPages}
           </span>
           <div className="flex gap-2">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-              className="btn-secondary py-2 text-sm"
-            >
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-secondary !py-2 text-sm">
               ← Prev
             </button>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-              className="btn-secondary py-2 text-sm"
-            >
+            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="btn-secondary !py-2 text-sm">
               Next →
             </button>
           </div>
@@ -242,8 +245,8 @@ function StatusBadge({ status }: { status: string }) {
   const meta = STATUS_META[status as keyof typeof STATUS_META];
   return (
     <span
-      className="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-      style={{ backgroundColor: meta?.bg ?? '#eee', color: meta?.fg ?? '#333' }}
+      className="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
+      style={{ backgroundColor: meta?.bg ?? 'rgba(255,255,255,0.1)', color: meta?.fg ?? '#fff' }}
     >
       {meta?.label ?? status}
     </span>
@@ -252,11 +255,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   } catch {
     return iso;
   }

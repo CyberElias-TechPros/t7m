@@ -23,9 +23,9 @@ export function FieldRenderer(props: FieldProps) {
 
 function Label({ field, htmlFor }: { field: FieldDef; htmlFor: string }) {
   return (
-    <label className="label-base mb-2" htmlFor={htmlFor}>
+    <label className="label-base mb-2.5" htmlFor={htmlFor}>
       {field.label}
-      {field.required && <span className="ml-1 text-accent" aria-hidden>*</span>}
+      {field.required && <span className="ml-1.5 text-violet-electric" aria-hidden>*</span>}
     </label>
   );
 }
@@ -93,11 +93,11 @@ function renderControl({ field, value, error, onChange }: FieldProps) {
     case 'choice':
       return (
         <fieldset aria-invalid={!!error}>
-          <legend className="label-base mb-2">
+          <legend className="label-base mb-2.5">
             {field.label}
-            {field.required && <span className="ml-1 text-accent" aria-hidden>*</span>}
+            {field.required && <span className="ml-1.5 text-violet-electric" aria-hidden>*</span>}
           </legend>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2.5 sm:grid-cols-2">
             {field.options?.map((opt) => (
               <RadioCard
                 key={opt.value}
@@ -113,9 +113,9 @@ function renderControl({ field, value, error, onChange }: FieldProps) {
     case 'multichoice':
       return (
         <fieldset aria-invalid={!!error}>
-          <legend className="label-base mb-2">
+          <legend className="label-base mb-2.5">
             {field.label}
-            {field.required && <span className="ml-1 text-accent" aria-hidden>*</span>}
+            {field.required && <span className="ml-1.5 text-violet-electric" aria-hidden>*</span>}
           </legend>
           <div className="flex flex-wrap gap-2">
             {field.options?.map((opt) => {
@@ -132,10 +132,10 @@ function renderControl({ field, value, error, onChange }: FieldProps) {
                     );
                   }}
                   className={
-                    'rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-4 ' +
+                    'rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-4 ' +
                     (selected
-                      ? 'border-accent bg-accent text-white focus:ring-accent/25'
-                      : 'border-line bg-white text-ink-soft hover:border-accent/50 hover:bg-accent-soft focus:ring-accent/15')
+                      ? 'border-violet-bright bg-violet-bright text-white shadow-glow-sm focus:ring-violet/30'
+                      : 'border-line bg-white/[0.03] text-ink-soft hover:border-violet-electric/60 hover:bg-violet/15 hover:text-white focus:ring-violet/20')
                   }
                   title={opt.hint}
                 >
@@ -190,22 +190,30 @@ function RadioCard({
   return (
     <label
       className={
-        'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ' +
+        'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-all duration-200 ' +
         (checked
-          ? 'border-accent bg-accent-soft ring-1 ring-accent'
-          : 'border-line bg-white hover:border-accent/50 hover:bg-paper')
+          ? 'border-violet-bright bg-violet/20 ring-1 ring-violet-bright shadow-glow-sm'
+          : 'border-line bg-white/[0.03] hover:border-violet-electric/50 hover:bg-violet/10')
       }
     >
+      <span
+        className={
+          'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ' +
+          (checked ? 'border-violet-electric bg-violet-bright' : 'border-line-strong')
+        }
+      >
+        {checked && <span className="h-2 w-2 rounded-full bg-white" />}
+      </span>
       <input
         type="radio"
         name={name}
         value={opt.value}
         checked={checked}
         onChange={onSelect}
-        className="mt-1 h-4 w-4 accent-[#2f5d50]"
+        className="sr-only-ish"
       />
       <span>
-        <span className="block text-[15px] font-semibold">{opt.label}</span>
+        <span className="block text-[15px] font-semibold text-white">{opt.label}</span>
         {opt.hint && <span className="mt-0.5 block text-[13px] text-ink-faint">{opt.hint}</span>}
       </span>
     </label>
@@ -239,22 +247,22 @@ function ChipsInput({
     <div
       role="group"
       className={
-        'rounded-xl border bg-white p-2 transition focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15 ' +
-        (invalid ? 'border-red-400' : 'border-line')
+        'rounded-xl border bg-void-black/60 p-2.5 transition focus-within:border-violet-electric focus-within:ring-4 focus-within:ring-violet/25 ' +
+        (invalid ? 'border-red-400/70' : 'border-line')
       }
     >
       <div className="flex flex-wrap items-center gap-2">
         {value.map((chip) => (
           <span
             key={chip}
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent-dark"
+            className="inline-flex items-center gap-1.5 rounded-full bg-violet-bright/90 px-3 py-1 text-sm font-semibold text-white shadow-glow-sm"
           >
             {chip}
             <button
               type="button"
               aria-label={`Remove ${chip}`}
               onClick={() => onChange(value.filter((v) => v !== chip))}
-              className="text-accent-dark/60 hover:text-accent-dark"
+              className="text-white/70 hover:text-white"
             >
               ✕
             </button>
@@ -263,7 +271,7 @@ function ChipsInput({
         <input
           id={id}
           type="text"
-          className="min-w-[12rem] flex-1 bg-transparent px-2 py-1.5 text-[15px] outline-none placeholder:text-ink-faint"
+          className="min-w-[12rem] flex-1 bg-transparent px-2 py-1.5 text-[15px] text-ink outline-none placeholder:text-ink-faint"
           placeholder={value.length === 0 ? placeholder : 'Add another…'}
           value={draft}
           aria-describedby={describedBy}
@@ -306,7 +314,7 @@ function PairListInput({
           <input
             id={`${idPrefix}-${i}-name`}
             type="text"
-            className="input-base max-w-[16rem]"
+            className="input-base max-w-[15rem]"
             value={row.name}
             placeholder={placeholders[0]}
             aria-label={placeholders[0]}
@@ -325,7 +333,7 @@ function PairListInput({
             type="button"
             aria-label="Remove row"
             onClick={() => onChange(value.filter((_, idx) => idx !== i))}
-            className="mt-1 rounded-lg px-3 py-2 text-sm font-semibold text-ink-faint hover:bg-paper hover:text-red-600"
+            className="mt-1 rounded-lg px-3 py-2 text-sm font-semibold text-ink-faint hover:bg-white/[0.06] hover:text-red-400"
           >
             ✕
           </button>
@@ -334,7 +342,7 @@ function PairListInput({
       <button
         type="button"
         onClick={() => onChange([...value, { name: '', why: '' }])}
-        className="text-sm font-semibold text-accent hover:text-accent-dark"
+        className="inline-flex items-center gap-2 rounded-lg border border-dashed border-line-strong px-4 py-2 text-sm font-semibold text-violet-soft transition hover:border-violet-electric hover:text-white"
       >
         + Add a brand
       </button>
