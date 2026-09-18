@@ -9,10 +9,8 @@
   // Defaults for local dev. Override per environment with `.dev.vars` (local)
   // or `wrangler secret put` (production). Never commit real secrets.
   "vars": {
-    "CORS_ORIGIN": "*",
-    "ADMIN_TOKEN": "dev-admin-token-change-me",
-    "RATE_LIMIT_SECRET": "dev-rate-limit-secret-change-me",
-    "PUBLIC_BASE_URL": "http://localhost:8787",
+    "CORS_ORIGIN": "https://t7m-one.vercel.app",
+    "PUBLIC_BASE_URL": "https://t7m-api.autumn-surf-21ec.workers.dev",
     "NOTIFY_EMAIL": "",
     "RESEND_API_KEY": ""
   },
@@ -21,7 +19,7 @@
       "binding": "DB",
       "database_name": "t7m",
       // Replace with the ID returned by `wrangler d1 create t7m` before deploying.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "4d79433d-37da-4bc1-8783-1e3c1c61e8f9",
       "migrations_dir": "migrations"
     }
   ],
@@ -35,7 +33,7 @@
     {
       "binding": "RATE_LIMIT",
       // Replace with the ID returned by `wrangler kv namespace create RATE_LIMIT`.
-      "id": "00000000000000000000000000000000"
+      "id": "e4de66b51f1d4f249c656631b026451a"
     }
   ]
 }
